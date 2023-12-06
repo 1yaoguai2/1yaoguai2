@@ -1,6 +1,12 @@
+using com.clwl.trflk.common.entity;
+using com.clwl.web;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Policy;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class MainCameraController : MonoBehaviour
@@ -16,6 +22,8 @@ public class MainCameraController : MonoBehaviour
     public float rotateSpeed = 10f;
     private float mouseX;
     private float mouseY;
+    Vector3 newMousePos;
+    Vector3 oldMousePos;
 
     //是否鼠标中键控制
     public bool isMouseMiddle = true;
@@ -27,32 +35,27 @@ public class MainCameraController : MonoBehaviour
     public float scrollSpeed = 10f;
     private float scrollWheel;
 
-    private void Start()
-    {
-    }
+
 
     void Update()
     {
-        if (Input.anyKey)
+        if (isMove)
         {
-            if (isMove)
-            {
-                Moving();
-            }
-            if (isRotate)
-            {
-                Rotation();
-            }
-            if (isMouseMiddle)
-            {
-                MouseMiddle();
-            }
+            Moving();
+        }
+        if (isRotate)
+        {
+            Rotation();
+        }
+        if (isMouseMiddle)
+        {
+            MouseMiddle();
         }
         if (isScrollWheel)
         {
             ScrollWheelControl();
         }
-
+        oldMousePos = Input.mousePosition;
     }
 
     /// <summary>
@@ -95,10 +98,16 @@ public class MainCameraController : MonoBehaviour
     {
         if (Input.GetMouseButton(1))
         {
-            mouseX = Input.GetAxis("Mouse X");
-            mouseY = -Input.GetAxis("Mouse Y");
-            transform.Rotate(Vector3.right * rotateSpeed * Time.deltaTime * mouseY);
-            transform.RotateAround(transform.position, Vector3.up, rotateSpeed * Time.deltaTime * mouseX);
+            newMousePos = Input.mousePosition;
+            Vector3 dis = newMousePos - oldMousePos;
+            float angleX = dis.x * rotateSpeed / 100f;//* Time.deltaTime;
+            float angleY = dis.y * rotateSpeed / 100f;// * Time.deltaTime;
+            transform.Rotate(new Vector3(-angleY, 0, 0), Space.Self);
+            transform.Rotate(new Vector3(0, angleX, 0), Space.World);
+            //mouseX = Input.GetAxis("Mouse X");
+            //mouseY = -Input.GetAxis("Mouse Y");
+            //transform.Rotate(Vector3.right * rotateSpeed * Time.deltaTime * mouseY);
+            //transform.RotateAround(transform.position, Vector3.up, rotateSpeed * Time.deltaTime * mouseX);
         }
     }
 
@@ -130,4 +139,5 @@ public class MainCameraController : MonoBehaviour
             transform.position = pos;
         }
     }
+
 }
