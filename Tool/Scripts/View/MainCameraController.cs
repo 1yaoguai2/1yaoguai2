@@ -1,23 +1,15 @@
-using com.clwl.trflk.common.entity;
-using com.clwl.web;
-using Newtonsoft.Json;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Policy;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainCameraController : MonoBehaviour
 {
-    //¿ØÖÆµÄÉãÏñ»ú
+    //æ§åˆ¶çš„æ‘„åƒæœº
     private GameObject mainCamera;
-    //ÊÇ·ñ¿ØÖÆÒÆ¶¯
+    //æ˜¯å¦æ§åˆ¶ç§»åŠ¨
     public bool isMove = true;
     public float moveSpeed = 10f;
     private Vector3 pos;
-    //ÊÇ·ñ¿ØÖÆĞı×ª
+    //æ˜¯å¦æ§åˆ¶æ—‹è½¬
     public bool isRotate = true;
     public float rotateSpeed = 10f;
     private float mouseX;
@@ -25,17 +17,17 @@ public class MainCameraController : MonoBehaviour
     Vector3 newMousePos;
     Vector3 oldMousePos;
 
-    //ÊÇ·ñÊó±êÖĞ¼ü¿ØÖÆ
+    //æ˜¯å¦é¼ æ ‡ä¸­é”®æ§åˆ¶
     public bool isMouseMiddle = true;
     public float MiddleSpeed = 10f;
 
 
-    //ÊÇ·ñ¹öÂÖ¿ØÖÆÔ¶½ü
+    //æ˜¯å¦æ»šè½®æ§åˆ¶è¿œè¿‘
     public bool isScrollWheel;
     public float scrollSpeed = 10f;
     private float scrollWheel;
 
-
+    private bool isExit;
 
     void Update()
     {
@@ -56,10 +48,11 @@ public class MainCameraController : MonoBehaviour
             ScrollWheelControl();
         }
         oldMousePos = Input.mousePosition;
+
     }
 
     /// <summary>
-    /// ¼üÅÌ°´¼ü¿ØÖÆ°´Å¥°´ÏÂ
+    /// é”®ç›˜æŒ‰é”®æ§åˆ¶æŒ‰é’®æŒ‰ä¸‹
     /// </summary>
     public void Moving()
     {
@@ -89,10 +82,15 @@ public class MainCameraController : MonoBehaviour
             pos += transform.up * moveSpeed * Time.deltaTime;
         }
         transform.position = pos;
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            isExit = !isExit;
+        }
     }
 
     /// <summary>
-    /// Êó±êÓÒ¼ü¿ØÖÆÊÓ½ÇĞı×ª
+    /// é¼ æ ‡å³é”®æ§åˆ¶è§†è§’æ—‹è½¬
     /// </summary>
     public void Rotation()
     {
@@ -112,7 +110,7 @@ public class MainCameraController : MonoBehaviour
     }
 
     /// <summary>
-    /// Êó±êÖĞ¼üÍÏ¶¯ÊÓ½Ç
+    /// é¼ æ ‡ä¸­é”®æ‹–åŠ¨è§†è§’
     /// </summary>
     public void MouseMiddle()
     {
@@ -127,7 +125,7 @@ public class MainCameraController : MonoBehaviour
     }
 
     /// <summary>
-    /// Êó±ê¹öÂÖ¿ØÖÆÊÓ½ÇÔ¶½ü
+    /// é¼ æ ‡æ»šè½®æ§åˆ¶è§†è§’è¿œè¿‘
     /// </summary>
     public void ScrollWheelControl()
     {
@@ -139,5 +137,39 @@ public class MainCameraController : MonoBehaviour
             transform.position = pos;
         }
     }
+
+    public void Exit()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
+    private void OnGUI()
+    {
+        if (isExit)
+        {
+            int w = Screen.width;
+            int h = Screen.height;
+
+            GUI.Box(new Rect(w / 2 - 200, h / 2 - 100, 400, 200), "é€€å‡ºè½¯ä»¶");
+
+            if (GUI.Button(new Rect(w / 2 - 150, h / 2, 100, 50), "é€€å‡º"))
+            {
+                Exit();
+            }
+            if (GUI.Button(new Rect(w / 2 + 50, h / 2, 100, 50), "å–æ¶ˆ"))
+            {
+                isExit = false;
+            }
+
+        }
+    }
+
+
+
+
 
 }
