@@ -63,7 +63,7 @@ public class FirstPersonController : MonoBehaviour
     private void RotateCR()
     {
         var mouseChange = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxis("Mouse Y")) * rotateSpeed * 100f * Time.deltaTime;
-        //var mouseChange = (Input.mousePosition - oldMousePosition) * rotateSpeed * Time.deltaTime;//与鼠标锁定冲突
+        //var mouseChange = (Input.mousePosition - oldMousePosition) * rotateSpeed * Time.deltaTime;//与鼠标锁定冲突,无法旋转
         transform.Rotate(new Vector3(-mouseChange.y, 0, 0), Space.Self);
         transform.Rotate(new Vector3(0, mouseChange.x, 0), Space.World);
         oldMousePosition = Input.mousePosition;
