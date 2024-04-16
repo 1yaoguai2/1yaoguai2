@@ -1,0 +1,1 @@
+盒状的高亮Shader，由一个带大小的空父物体，和Cube（使用Cube网格材质和BaseTransOffsetShader）和Plane（使用Plane网格材质华人TransOffsetShader）两个子物体组成
