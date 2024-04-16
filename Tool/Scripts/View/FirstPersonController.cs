@@ -45,8 +45,8 @@ public class FirstPersonController : MonoBehaviour
     /// </summary>
     private void MoveCR()
     {
-        y = Input.GetAxis("Vertical") * moveSpeed * (Input.GetKey(runKey) ? runMultiplier : 1);// * Time.deltaTime;
-        x = Input.GetAxis("Horizontal") * moveSpeed;// * Time.deltaTime;
+        y = Input.GetAxis("Vertical") * moveSpeed * (Input.GetKey(runKey) ? runMultiplier : 1) * Time.deltaTime;
+        x = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
 
         if (Physics.Raycast(transform.position + Vector3.up * 10000, Vector3.down, out hit, Mathf.Infinity, groundLayer))
         {
@@ -54,8 +54,7 @@ public class FirstPersonController : MonoBehaviour
             //hoverHeight = transform.position.y + transform.position.y > hit.point.y + 1.8f ? -0.1f : 0.1f;
             hoverHeight = hit.point.y + 3.6f;
         }
-        //transform.Translate(new Vector3(x, transform.position.y, y));
-        Vector3.MoveTowards(transform.position, new Vector3(x, hoverHeight - transform.position.y, y), moveSpeed * Time.deltaTime);
+        transform.Translate(new Vector3(x, hoverHeight -transform.position.y, y));
     }
 
     /// <summary>
