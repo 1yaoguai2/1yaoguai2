@@ -1,0 +1,3 @@
+扩展方法:[MenuItem("菜单/菜单2/选项")]
+
+selection.gameObjects,获取编辑器下选中的物体
