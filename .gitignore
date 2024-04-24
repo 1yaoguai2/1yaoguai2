@@ -50,3 +50,7 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+Tool/Scripts/MenuItem/.vs/ProjectSettings.json
+Tool/Scripts/MenuItem/.vs/slnx.sqlite
+Tool/Scripts/MenuItem/.vs/MenuItem/FileContentIndex/37c0253b-9083-4e2f-94ad-b24a8e5a9a79.vsidx
+Tool/Scripts/MenuItem/.vs/MenuItem/FileContentIndex/read.lock
