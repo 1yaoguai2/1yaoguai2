@@ -3,9 +3,16 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// 层级窗口物体从小到大排序
+/// 选中一个物体时，对子物体进行名称大小排序
+/// 选中多个物体时，通过名称大小进行排序
+/// 循环所有子物体列表，通过数组的OrderBy得到新的数组
+/// 将数组的元素通过SetSiblingIndex设置在层级窗口中的index
+/// </summary>
 public class Order : MonoBehaviour
 {
-    [MenuItem("Tools/����������")]
+    [MenuItem("Tools/排序子物体")]
     public static void OrderChild()
     {
         try
@@ -13,7 +20,7 @@ public class Order : MonoBehaviour
             var selectObjs = Selection.gameObjects;
             if (selectObjs.Length == 0)
             {
-                throw new Exception("����ѡ��һ�����壡");
+                throw new Exception("至少选中一个物体！");
             }
             else if (selectObjs.Length == 1)
             {
@@ -27,7 +34,7 @@ public class Order : MonoBehaviour
                 for (int j = 0; j < newChilds.Count; j++)
                 {
                     Debug.Log(newChilds[j].name);
-                    //�����뷨
+                    //错误想法 循环判断当前对象与下一个对象的大小，将大的往后移动，之后再判断与下下个的大小关系
                     //bool orderB = int.Parse(childs[j].name) > int.Parse(childs[j + 1].name);
                     //int currentIndex = j;
                     //while (orderB)
@@ -44,12 +51,18 @@ public class Order : MonoBehaviour
             }
             else
             {
-                var newSelectObjs =  selectObjs.OrderBy(t => int.Parse(t.name)).ToList();
-                for (int k = 0; k < newSelectObjs.Length; k++)
+                var newSelectObjs = selectObjs.OrderBy(t => int.Parse(t.name)).ToList();
+                for (int k = 0; k < newSelectObjs.Count; k++)
                 {
-                    newSelectObjs[k].SetSiblingIndex(k);
+                    newSelectObjs[k].transform.SetSiblingIndex(k);
                 }
             }
         }
+        catch (Exception e)
+        {
+            Debug.LogError(e.Message);
+        }
+    }
+}
         
                 
