@@ -1,12 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class FirstPersonController : MonoBehaviour
 {
-    //光标状态
-    public bool cursorStatus;
     //移动相关
     [Header("移动参数")]
     public float moveSpeed = 10f;
@@ -23,11 +18,18 @@ public class FirstPersonController : MonoBehaviour
     Vector2 targetDirection;
     Vector3 oldMousePosition;
     public float rotateSpeed = 10f;
-    void Start()
+    public Vector3 vect;
+    private float xcream;
+    private float ycream;
+
+    //反转Y轴旋转
+    public bool invertY;
+
+
+    void OnEnable()
     {
         //初始化鼠标
-        Cursor.visible = false;
-        Cursor.lockState = 0;
+        LockCursor = false;
         //初始化角度
         targetDirection = transform.localRotation.eulerAngles;
         oldMousePosition = Input.mousePosition;
@@ -38,6 +40,11 @@ public class FirstPersonController : MonoBehaviour
         MoveCR();
         RotateCR();
         CursorCR();
+    }
+    private void LateUpdate()
+    {
+        LimitAngle(80f);
+        //LimitAngleUandD(170f);
     }
 
     /// <summary>
@@ -50,11 +57,10 @@ public class FirstPersonController : MonoBehaviour
 
         if (Physics.Raycast(transform.position + Vector3.up * 10000, Vector3.down, out hit, Mathf.Infinity, groundLayer))
         {
-            Debug.Log(hit.point.y);
-            //hoverHeight = transform.position.y + transform.position.y > hit.point.y + 1.8f ? -0.1f : 0.1f;
+            //Debug.Log(hit.point.y);
             hoverHeight = hit.point.y + 3.6f;
         }
-        transform.Translate(new Vector3(x, hoverHeight -transform.position.y, y));
+        transform.Translate(new Vector3(x, hoverHeight - transform.position.y, y));
     }
 
     /// <summary>
@@ -62,8 +68,10 @@ public class FirstPersonController : MonoBehaviour
     /// </summary>
     private void RotateCR()
     {
-        var mouseChange = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxis("Mouse Y")) * rotateSpeed * 100f * Time.deltaTime;
+        //if (!Input.GetMouseButton(1)) return;
+        var mouseChange = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * rotateSpeed * 100f * Time.deltaTime;
         //var mouseChange = (Input.mousePosition - oldMousePosition) * rotateSpeed * Time.deltaTime;//与鼠标锁定冲突,无法旋转
+        if (invertY) mouseChange.y = -mouseChange.y;
         transform.Rotate(new Vector3(-mouseChange.y, 0, 0), Space.Self);
         transform.Rotate(new Vector3(0, mouseChange.x, 0), Space.World);
         oldMousePosition = Input.mousePosition;
@@ -74,11 +82,65 @@ public class FirstPersonController : MonoBehaviour
     /// </summary>
     private void CursorCR()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyUp(KeyCode.Escape))
         {
-            cursorStatus = !cursorStatus;
+            LockCursor = !LockCursor;   //TODO:按下鼠标左键会调回来执行改语句
         }
-        Cursor.lockState = cursorStatus ? CursorLockMode.Locked : CursorLockMode.None;
-        Cursor.visible = !cursorStatus;
+    }
+
+    /// <summary>
+    /// 鼠标控制器
+    /// </summary>
+    public bool LockCursor
+    {
+        get { return Cursor.lockState == CursorLockMode.Locked ? true : false; }
+        set
+        {
+            Cursor.visible = value;
+            Cursor.lockState = value ? CursorLockMode.None : CursorLockMode.Locked;
+        }
+    }
+
+    /// <summary>
+    /// 限制相机上下视角的角度
+    /// </summary>
+    /// <param name="angle">角度</param>
+    private void LimitAngle(float angle)
+    {
+        vect = this.transform.eulerAngles;
+        //当前相机x轴旋转的角度(0~360)
+        xcream = IsPosNum(vect.x);
+        if (xcream > angle)
+            this.transform.rotation = Quaternion.Euler(angle, vect.y, 0);
+        else if (xcream < -angle)
+            this.transform.rotation = Quaternion.Euler(-angle, vect.y, 0);
+    }
+
+    /// <summary>
+    /// 限制相机左右视角的角度
+    /// </summary>
+    /// <param name="angle"></param>
+    private void LimitAngleUandD(float angle)
+    {
+        vect = this.transform.eulerAngles;
+        //当前相机y轴旋转的角度(0~360)
+        ycream = IsPosNum(vect.y);
+        if (ycream > angle)
+            this.transform.rotation = Quaternion.Euler(vect.x, angle, 0);
+        else if (ycream < -angle)
+            this.transform.rotation = Quaternion.Euler(vect.x, -angle, 0);
+    }
+
+    /// <summary>
+    /// 将角度转换为-180~180的角度
+    /// </summary>
+    /// <param name="x"></param>
+    /// <returns></returns>
+    private float IsPosNum(float x)
+    {
+        x -= 180;
+        if (x < 0)
+            return x + 180;
+        else return x - 180;
     }
 }
