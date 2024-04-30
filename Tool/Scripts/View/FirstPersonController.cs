@@ -1,3 +1,4 @@
+using Static.Model;
 using UnityEngine;
 
 public class FirstPersonController : MonoBehaviour
@@ -33,6 +34,7 @@ public class FirstPersonController : MonoBehaviour
         //初始化角度
         targetDirection = transform.localRotation.eulerAngles;
         oldMousePosition = Input.mousePosition;
+        StaticModel.currentCamera = transform;
     }
 
     void Update()
@@ -71,7 +73,7 @@ public class FirstPersonController : MonoBehaviour
         //if (!Input.GetMouseButton(1)) return;
         var mouseChange = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * rotateSpeed * 100f * Time.deltaTime;
         //var mouseChange = (Input.mousePosition - oldMousePosition) * rotateSpeed * Time.deltaTime;//与鼠标锁定冲突,无法旋转
-        if (invertY) mouseChange.y = -mouseChange.y;
+        if (invertY) mouseChange.y = - mouseChange.y;
         transform.Rotate(new Vector3(-mouseChange.y, 0, 0), Space.Self);
         transform.Rotate(new Vector3(0, mouseChange.x, 0), Space.World);
         oldMousePosition = Input.mousePosition;
@@ -93,7 +95,7 @@ public class FirstPersonController : MonoBehaviour
     /// </summary>
     public bool LockCursor
     {
-        get { return Cursor.lockState == CursorLockMode.Locked ? true : false; }
+        get { return Cursor.lockState == CursorLockMode.Locked ? false : true; }
         set
         {
             Cursor.visible = value;

@@ -147,13 +147,13 @@ namespace UnityTemplateProjects
             {
                 direction += Vector3.right;
             }
-            if (Input.GetKey(KeyCode.Q))
+            if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.C))
             {
-                direction += Vector3.down;
+                direction += Vector3.down * 2f;
             }
-            if (Input.GetKey(KeyCode.E))
+            if (Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.Space))
             {
-                direction += Vector3.up;
+                direction += Vector3.up * 2f;
             }
 #endif
             return direction;
