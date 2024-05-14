@@ -1,15 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Tool.Common;
 using UnityEngine;
 
 /// <summary>
 /// unity场景windows窗口管理
+/// sealed 密封的，无法被继承
 /// </summary>
-public class SceneWindowManager : Singleton<SceneWindowManager>
+public sealed class SceneWindowManager
 {
-    
+    public static SceneWindowManager Instance = new SceneWindowManager(); //单列模式
 
     [DllImport("user32.dll")]
     public static extern bool ShowWindow(IntPtr hwnd, int nCmdShow);
@@ -80,12 +79,12 @@ public class SceneWindowManager : Singleton<SceneWindowManager>
     /// </summary>
     /// <param name="i">分辨倍率</param>
     /// <param name="show">是否全屏</param>
-    public void WindowSet(int i,bool show = true)
+    public void WindowSet(int i, bool show = true)
     {
-        SceneWindowSizeControl(GetSystemMetrics(SM_CXSCREEN)/i, GetSystemMetrics(SM_CYSCREEN)/i,show);
+        SceneWindowSizeControl(GetSystemMetrics(SM_CXSCREEN) / i, GetSystemMetrics(SM_CYSCREEN) / i, show);
     }
 
-    #region 实际使用，设置playerSettings - Fullscreen Mode - windowed
+    #region 实际使用，设置playerSettings - player-Resolution ana Presentation - Resolution - Fullscreen Mode - windowed
     //是否退出
     bool isExit = false;
     private void OnGUI()
@@ -115,6 +114,9 @@ public class SceneWindowManager : Singleton<SceneWindowManager>
 Application.Quit();
 #endif
     }
+    //外部设置窗口最大化和最小化
+    //SceneWindowManager.Instance.WindowSet(SceneWindowManager.switchover? 2 : 1, !SceneWindowManager.switchover);
+
     #endregion
 
 }
