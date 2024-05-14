@@ -7,3 +7,7 @@
 4.1打包后的html文件，把div里面的style属性的width和height改为100%
 
 4.2找到canvasScaler修改UIScaleMode为Scale With Screen Size，分辨率为开发的分辨率，Match修改为0.5
+
+5.参考网页
+
+(https://blog.csdn.net/qq_41084756/article/details/124879167)
