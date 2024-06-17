@@ -19,10 +19,10 @@ System.Data.dll
 复制到Plugins内
 
 ## 报错解决
-<font color="red">SqlConnection未找到相关引用</font>
+1.<font color="red">SqlConnection未找到相关引用</font>
 找到unity的项目设置 player/OtherSettings/Api Compatibility ,修改.net版本
 
-
+2.如果依旧报错，删除刚刚导入的Unity\Editor\Data\Mono\lib\mono\unity文件夹下的System.Data.dll，导入C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework.NETFramework\v4.7.1目录下的System.Data.dll，找到 工具 -> NuGet 包管理器 -> 管理解决方案的 NuGet程序包，在弹出的窗口中搜索 sql，找到System.Data.SqlClient ，然后选择全部进行安装，修改.net版本为默认，重启VS，添加引用解决报错。
 
 ## 读取数据和跟新数据
 
