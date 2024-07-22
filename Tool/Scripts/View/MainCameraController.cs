@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MainCameraController : MonoBehaviour
 {
@@ -16,6 +15,11 @@ public class MainCameraController : MonoBehaviour
     private float mouseY;
     Vector3 newMousePos;
     Vector3 oldMousePos;
+    public Vector3 OldMousePos
+    {
+        get => oldMousePos;
+        set => oldMousePos = value;
+    }
 
     //是否鼠标中键控制
     public bool isMouseMiddle = true;
@@ -27,7 +31,7 @@ public class MainCameraController : MonoBehaviour
     public float scrollSpeed = 10f;
     private float scrollWheel;
 
-    private bool isExit;
+
 
     void Update()
     {
@@ -48,7 +52,6 @@ public class MainCameraController : MonoBehaviour
             ScrollWheelControl();
         }
         oldMousePos = Input.mousePosition;
-
     }
 
     /// <summary>
@@ -82,11 +85,6 @@ public class MainCameraController : MonoBehaviour
             pos += transform.up * moveSpeed * Time.deltaTime;
         }
         transform.position = pos;
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            isExit = !isExit;
-        }
     }
 
     /// <summary>
@@ -118,8 +116,11 @@ public class MainCameraController : MonoBehaviour
         {
             pos = transform.position;
             Vector3 offset = Vector3.zero;
-            offset -= Vector3.ProjectOnPlane(transform.right, transform.up) * Input.GetAxis("Mouse X") * Time.deltaTime * MiddleSpeed;
-            offset -= Vector3.ProjectOnPlane(transform.forward, transform.up) * Input.GetAxis("Mouse Y") * Time.deltaTime * MiddleSpeed;
+            //offset -= Vector3.ProjectOnPlane(transform.right, transform.up) * Input.GetAxis("Mouse X") * Time.deltaTime * MiddleSpeed;
+            //offset -= Vector3.ProjectOnPlane(Vector3.up, Vector3.one) * Input.GetAxis("Mouse Y") * Time.deltaTime * MiddleSpeed;
+            offset -= transform.right * Input.GetAxis("Mouse X") * Time.deltaTime * MiddleSpeed;
+            offset -= Vector3.up * Input.GetAxis("Mouse Y") * Time.deltaTime * MiddleSpeed;
+
             transform.position += offset;
         }
     }
@@ -137,39 +138,5 @@ public class MainCameraController : MonoBehaviour
             transform.position = pos;
         }
     }
-
-    public void Exit()
-    {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
-    }
-
-    private void OnGUI()
-    {
-        if (isExit)
-        {
-            int w = Screen.width;
-            int h = Screen.height;
-
-            GUI.Box(new Rect(w / 2 - 200, h / 2 - 100, 400, 200), "退出软件");
-
-            if (GUI.Button(new Rect(w / 2 - 150, h / 2, 100, 50), "退出"))
-            {
-                Exit();
-            }
-            if (GUI.Button(new Rect(w / 2 + 50, h / 2, 100, 50), "取消"))
-            {
-                isExit = false;
-            }
-
-        }
-    }
-
-
-
-
 
 }
