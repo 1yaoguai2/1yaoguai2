@@ -23,12 +23,12 @@ public class MainCameraController : MonoBehaviour
 
     //是否鼠标中键控制
     public bool isMouseMiddle = true;
-    public float MiddleSpeed = 10f;
+    public float MiddleSpeed = 100f;
 
 
     //是否滚轮控制远近
-    public bool isScrollWheel;
-    public float scrollSpeed = 10f;
+    public bool isScrollWheel = true;
+    public float scrollSpeed = 100f;
     private float scrollWheel;
 
 
@@ -116,11 +116,8 @@ public class MainCameraController : MonoBehaviour
         {
             pos = transform.position;
             Vector3 offset = Vector3.zero;
-            //offset -= Vector3.ProjectOnPlane(transform.right, transform.up) * Input.GetAxis("Mouse X") * Time.deltaTime * MiddleSpeed;
-            //offset -= Vector3.ProjectOnPlane(Vector3.up, Vector3.one) * Input.GetAxis("Mouse Y") * Time.deltaTime * MiddleSpeed;
             offset -= transform.right * Input.GetAxis("Mouse X") * Time.deltaTime * MiddleSpeed;
             offset -= Vector3.up * Input.GetAxis("Mouse Y") * Time.deltaTime * MiddleSpeed;
-
             transform.position += offset;
         }
     }
