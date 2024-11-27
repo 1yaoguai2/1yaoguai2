@@ -1,24 +1,24 @@
-using Static.Model;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class FirstPersonController : MonoBehaviour
 {
     //移动相关
-    [Header("移动参数")]
-    public float moveSpeed = 10f;
+    [Header("移动参数")] public float moveSpeed = 10f;
     private float x;
-    private float y;
+    private float z;
     public KeyCode runKey = KeyCode.LeftShift;
     public int runMultiplier = 2;
+
     public LayerMask groundLayer;
+
     //射线检测
     RaycastHit hit;
+
     float hoverHeight = 0f;
+
     //旋转相关
-    [Header("旋转参数")]
-    Vector2 targetDirection;
-    Vector3 oldMousePosition;
-    public float rotateSpeed = 10f;
+    [Header("旋转参数")] public float rotateSpeed = 10f;
     public Vector3 vect;
     private float xcream;
     private float ycream;
@@ -26,23 +26,25 @@ public class FirstPersonController : MonoBehaviour
     //反转Y轴旋转
     public bool invertY;
 
+    [Header("范围限制")] [SerializeField] private bool useLimit;
+    [SerializeField] private Vector2 xLimit;
+    [SerializeField] private Vector2 zLimit;
 
     void OnEnable()
     {
         //初始化鼠标
-        LockCursor = false;
-        //初始化角度
-        targetDirection = transform.localRotation.eulerAngles;
-        oldMousePosition = Input.mousePosition;
-        StaticModel.currentCamera = transform;
+        //LockCursor = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
+        //CursorCR();
+        if (LockCursor) return;
         MoveCR();
         RotateCR();
-        CursorCR();
     }
+
     private void LateUpdate()
     {
         LimitAngle(80f);
@@ -54,15 +56,30 @@ public class FirstPersonController : MonoBehaviour
     /// </summary>
     private void MoveCR()
     {
-        y = Input.GetAxis("Vertical") * moveSpeed * (Input.GetKey(runKey) ? runMultiplier : 1) * Time.deltaTime;
+        z = Input.GetAxis("Vertical") * moveSpeed * (Input.GetKey(runKey) ? runMultiplier : 1) * Time.deltaTime;
         x = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
 
-        if (Physics.Raycast(transform.position + Vector3.up * 10000, Vector3.down, out hit, Mathf.Infinity, groundLayer))
+        if (Physics.Raycast(transform.position + Vector3.up * 1000, Vector3.down, out hit, Mathf.Infinity, groundLayer))
         {
             //Debug.Log(hit.point.y);
-            hoverHeight = hit.point.y + 3.6f;
+            hoverHeight = hit.point.y + 1.6f;
         }
-        transform.Translate(new Vector3(x, hoverHeight - transform.position.y, y));
+
+        if (useLimit)
+        {
+            var pos = transform.position;
+            if (pos.x < xLimit.x)
+                pos.x = xLimit.x;
+            else if (pos.x > xLimit.y)
+                pos.x = xLimit.y;
+            if (pos.z < zLimit.x)
+                pos.z = zLimit.x;
+            else if (pos.z > zLimit.y)
+                pos.z = zLimit.y;
+            transform.position = pos;
+        }
+
+        transform.Translate(new Vector3(x, hoverHeight - transform.position.y, z));
     }
 
     /// <summary>
@@ -70,13 +87,11 @@ public class FirstPersonController : MonoBehaviour
     /// </summary>
     private void RotateCR()
     {
-        //if (!Input.GetMouseButton(1)) return;
-        var mouseChange = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * rotateSpeed * 100f * Time.deltaTime;
-        //var mouseChange = (Input.mousePosition - oldMousePosition) * rotateSpeed * Time.deltaTime;//与鼠标锁定冲突,无法旋转
-        if (invertY) mouseChange.y = - mouseChange.y;
+        var mouseChange = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) *
+                          (rotateSpeed * 100f * Time.deltaTime);
+        if (invertY) mouseChange.y = -mouseChange.y;
         transform.Rotate(new Vector3(-mouseChange.y, 0, 0), Space.Self);
         transform.Rotate(new Vector3(0, mouseChange.x, 0), Space.World);
-        oldMousePosition = Input.mousePosition;
     }
 
     /// <summary>
@@ -86,7 +101,8 @@ public class FirstPersonController : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Escape))
         {
-            LockCursor = !LockCursor;   //TODO:按下鼠标左键会调回来执行改语句
+            //TODO:按下鼠标左键会调回来执行改语句
+            LockCursor = !LockCursor;
         }
     }
 
@@ -95,10 +111,10 @@ public class FirstPersonController : MonoBehaviour
     /// </summary>
     public bool LockCursor
     {
-        get { return Cursor.lockState == CursorLockMode.Locked ? false : true; }
+        get { return Cursor.lockState == CursorLockMode.None; }
         set
         {
-            Cursor.visible = value;
+            //Cursor.visible = value;
             Cursor.lockState = value ? CursorLockMode.None : CursorLockMode.Locked;
         }
     }
@@ -122,7 +138,7 @@ public class FirstPersonController : MonoBehaviour
     /// 限制相机左右视角的角度
     /// </summary>
     /// <param name="angle"></param>
-    private void LimitAngleUandD(float angle)
+    private void LimitAngleHorizontal(float angle)
     {
         vect = this.transform.eulerAngles;
         //当前相机y轴旋转的角度(0~360)
