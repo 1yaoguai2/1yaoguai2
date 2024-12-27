@@ -1,2 +1,3 @@
 我的密钥：sk-e8f36546b32b455e8fc7987a2da11bec
 https://dashscope.aliyuncs.com/compatible-mode/v1
+qwen2.5-coder-32b-instruct
