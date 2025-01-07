@@ -1,7 +1,7 @@
 ### Hi there 👋
--My English is terrible /n
--My personal website!
--https://1yaoguai2.github.io/PersonalWeb_Project/
+-My English is terrible </br>
+-My personal website!   
+-https://1yaoguai2.github.io/PersonalWeb_Project/  </br>
 -Thanks
 
 <!--
