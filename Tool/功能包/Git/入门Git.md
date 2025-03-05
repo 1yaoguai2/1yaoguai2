@@ -77,3 +77,8 @@ git push -f https://github.com/1yaoguai2/XTools.git upm(当前分支)
 
 
 
+# Git快捷键
+
+1. 退出日志
+
+   Q
